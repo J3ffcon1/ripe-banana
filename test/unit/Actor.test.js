@@ -7,7 +7,7 @@ describe('Actor Unit Test', () => {
 
     it('a valid and good model yus', () => {
         const input = {
-            name: 'Nicholas Cage',
+            name: 'Nicolas Cage',
             dob: new Date(1964, 0, 7),
             pob: 'Long Beach, CA'
         };
