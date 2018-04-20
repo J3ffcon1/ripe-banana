@@ -16,7 +16,6 @@ describe('Review Unit Test', () => {
         };
         const review = new Review(input);
         input._id = review._id;
-        console.log(review.validateSync());
         assert.deepEqual(review.toJSON(), input);
         assert.isUndefined(review.validateSync());
     });
