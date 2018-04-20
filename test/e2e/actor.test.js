@@ -1,8 +1,10 @@
 const { assert } = require('chai');
-const request = required('./request');
+const request = require('./request');
 const { dropCollection } = require('./db');
 
 describe('Actor E2E Test', () => {
+
+    before(() => dropCollection('actors'));
 
     let actor1 = {
         name: 'John Krasinski',
@@ -14,8 +16,30 @@ describe('Actor E2E Test', () => {
         name: 'Aubrey Plaza',
         dob: new Date(1984, 5, 26),
         pob: ''
-    }
+    };
 
+    const checkOk = res => {
+        if(!res.ok) throw res.error;
+        return res;
+    };
 
+    it('posts an actor to db', () => {
+        return request.post('/actors')
+            .send(actor1)
+            .then(checkOk)
+            .then(({ body }) => {
+                const { _id, __v, dob } = body;
+                assert.ok(_id);
+                assert.equal(__v, 0);
+                assert.ok(dob);
+                assert.deepEqual(body, {
+                    ...actor1,
+                    _id, __v, dob
+                });
+                actor1 = body;
+            });
+    });
+
+    it
 
 });
