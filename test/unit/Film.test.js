@@ -21,7 +21,6 @@ describe('Film schema test', () => {
         const film = new Film(eightmm);
         eightmm._id = film._id;
         eightmm.cast[0]._id = film.cast[0]._id;
-        console.log(film.toJSON());
         assert.deepEqual(film.toJSON(), eightmm);
         assert.isUndefined(film.validateSync());
             
