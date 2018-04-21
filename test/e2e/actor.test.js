@@ -40,6 +40,17 @@ describe('Actor E2E Test', () => {
             });
     });
 
-    it
+    it('gets an actor by id', () => {
+        return request.post('/actors')
+            .send(actor2)
+            .then(checkOk)
+            .then(({ body }) => {
+                actor2 = body;
+                return request.get(`/actors/${actor2._id}`);
+            })
+            .then(({ body }) => {
+                assert.deepEqual(body, actor2);
+            });
+    });
 
 });
