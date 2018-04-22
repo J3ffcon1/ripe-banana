@@ -58,7 +58,6 @@ describe('Reviewer API', () => {
         return request.get('/reviewers')
             .then(checkOk)
             .then(({ body }) => {
-                console.log(body);
                 assert.deepEqual(body, [ebert, dana].map(getFields));
             });
 
