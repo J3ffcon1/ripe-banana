@@ -58,4 +58,40 @@ describe('Studio E2E Test', () => {
             });
     });
 
+    const getFields = ({ _id, name }) => ({ _id, name });
+
+    it('gets all studios', () => {
+        return request.get('/studios')
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, [studio1, studio2].map(getFields));
+            });
+    });
+
+    it('updates a studio by id', () => {
+        studio1.address.city = 'Hollywood';
+
+        return request.put(`/studios/${studio1._id}`)
+            .send(studio1)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, studio1);
+                return request.get(`/studios/${studio1._id}`);
+            })
+            .then(({ body }) => {
+                assert.deepEqual(body, studio1);
+            });
+    });
+
+    it('removes a studio by id', () => {
+        return request.delete(`/studios/${studio2._id}`)
+            .then(checkOk)
+            .then(() => {
+                return request.get(`/studios/${studio2._id}`);
+            })
+            .then(res => {
+                assert.equal(res.status, 404);
+            });
+    });
+
 });
