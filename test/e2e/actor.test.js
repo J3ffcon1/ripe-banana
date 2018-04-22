@@ -15,7 +15,7 @@ describe('Actor E2E Test', () => {
     let actor2 = {
         name: 'Aubrey Plaza',
         dob: new Date(1984, 5, 26),
-        pob: ''
+        pob: 'Wilmington, DE'
     };
 
     const checkOk = res => {
@@ -40,6 +40,55 @@ describe('Actor E2E Test', () => {
             });
     });
 
-    it
+    it('gets an actor by id', () => {
+        return request.post('/actors')
+            .send(actor2)
+            .then(checkOk)
+            .then(({ body }) => {
+                actor2 = body;
+                return request.get(`/actors/${actor2._id}`);
+            })
+            .then(({ body }) => {
+                assert.deepEqual(body, actor2);
+            });
+    });
 
+    const getFields = ({ _id, name }) => {
+        return {
+            _id, name
+        };
+    };
+
+    it('gets all actors', () => {
+        return request.get('/actors')
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, [actor1, actor2].map(getFields));
+            });
+    });
+
+    it('updates an actor', () => {
+        actor2.name = 'Aubrey Christina Plaza';
+        
+        return request.put(`/actors/${actor2._id}`)
+            .send(actor2)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, actor2);
+                return request.get(`/actors/${actor2._id}`);
+            })
+            .then(({ body }) => {
+                assert.deepEqual(body, actor2);
+            });
+    });
+
+    it('removes an actor', () => {
+        return request.delete(`/actors/${actor1._id}`)
+            .then(() => {
+                return request.get(`/actors/${actor1._id}`);
+            })
+            .then(res => {
+                assert.equal(res.status, 404);
+            });
+    });
 });
