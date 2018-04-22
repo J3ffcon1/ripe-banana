@@ -59,7 +59,7 @@ describe('Reviewer API', () => {
             .then(checkOk)
             .then(({ body }) => {
                 console.log(body);
-                assert.deepEqual(body, [dana, ebert].map(getFields));
+                assert.deepEqual(body, [ebert, dana].map(getFields));
             });
 
     });
