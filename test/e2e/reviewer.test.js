@@ -51,6 +51,20 @@ describe('Reviewer API', () => {
             });
     });
     
+    it('update a reviewer', () => {
+        dana.name = 'Dana Shawn Stevens';
+
+        return request.put(`/reviewers/${dana._id}`)
+            .send(dana)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, dana);
+                return request.get(`/reviewers/${dana._id}`);
+            })
+            .then(({ body }) => {
+                assert.equal(body.name, dana.name);
+            });
+    });
   
 });
 
