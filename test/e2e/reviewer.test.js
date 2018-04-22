@@ -50,6 +50,19 @@ describe('Reviewer API', () => {
                 assert.deepEqual(body, dana);
             });
     });
+
+    const getFields = ({ _id, name }) => ({ _id, name });
+
+
+    it('gets all reviewers', () => {
+        return request.get('/reviewers')
+            .then(checkOk)
+            .then(({ body }) => {
+                console.log(body);
+                assert.deepEqual(body, [dana, ebert].map(getFields));
+            });
+
+    });
     
     it('update a reviewer', () => {
         dana.name = 'Dana Shawn Stevens';
@@ -65,6 +78,25 @@ describe('Reviewer API', () => {
                 assert.equal(body.name, dana.name);
             });
     });
+
+    it('deletes a reviewer', () => {
+        return request.delete(`/reviewers/${dana._id}`)
+            .then(() => {
+                return request.get(`/reviewers/${dana._id}`);
+            })
+            .then(res => {
+                assert.equal(res.status, 404);
+            });
+    });
+  
+
+    // it('queries reviewers', () => {
+    //     return request.get('/reviewers?company=Slate')
+    //         .then(checkOk)
+    //         .then(({ body }) => {
+    //             assert.deepEqual(body, [dana].map(getFields));
+    //         });
+    // });
   
 });
 
