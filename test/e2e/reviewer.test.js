@@ -88,14 +88,6 @@ describe('Reviewer API', () => {
             });
     });
   
-
-    // it('queries reviewers', () => {
-    //     return request.get('/reviewers?company=Slate')
-    //         .then(checkOk)
-    //         .then(({ body }) => {
-    //             assert.deepEqual(body, [dana].map(getFields));
-    //         });
-    // });
   
 });
 
