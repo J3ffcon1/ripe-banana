@@ -1,7 +1,7 @@
 const { assert } = require('chai');
-const Film = require('../models/film');
-const Studio = require('../models/studio');
-const Actor = require('../models/actor');
+// const Film = require('../../lib/models/Film');
+// const Studio = require('../../lib/models/Studio');
+// const Actor = require('../..//lib/models/Actor');
 const request = require('./request');
 const { dropCollection } = require('./db');
 const { Types } = require('mongoose');
@@ -25,7 +25,7 @@ describe('Film E2E Test', () => {
     let actor1 = { name: 'John Krasinski' };
 
     before(() => {
-        return request.send('/actors')
+        return request.post('/actors')
             .send(actor1)
             .then(({ body }) => {
                 actor1 = body;
@@ -47,24 +47,24 @@ describe('Film E2E Test', () => {
         }]
     };
 
-    // it('saves a film', () => {
-    //     film1.studio = studio1._id;
-    //     film1.cast.actor = actor1._id;
+    it('saves a film', () => {
+        film1.studio = studio1._id;
+        film1.cast.actor = actor1._id;
 
-    //     return request.post('/films')
-    //         .send(film1)
-    //         .then(checkOk)
-    //         .then(({ body }) => {
-    //             const { _id, __v } = body;
-    //             assert.ok(_id);
-    //             assert.equal(__v, 0);
-    //             assert.deepEqual(body, {
-    //                 ...film1,
-    //                 _id, __v
-    //             });
-    //             film1 = body;
-    //         });
-    // });
+        return request.post('/films')
+            .send(film1)
+            .then(checkOk)
+            .then(({ body }) => {
+                const { _id, __v } = body;
+                assert.ok(_id);
+                assert.equal(__v, 0);
+                assert.deepEqual(body, {
+                    ...film1,
+                    _id, __v
+                });
+                film1 = body;
+            });
+    });
 
 
 
