@@ -5,10 +5,12 @@ const { dropCollection } = require('./db');
 describe('Reviewer API', () => {
 
     before(() => dropCollection('reviewers'));
+    before(() => dropCollection('reviews'));
+    before(() => dropCollection('films'));
 
-    let ebert = {
-        name: 'Roger Ebert',
-        company: 'RogerEbert.com'
+    let travers = {
+        name: 'Peter Travers',
+        company: 'Rolling Stones'
     };
 
     let dana = {
@@ -20,10 +22,12 @@ describe('Reviewer API', () => {
         if(!res.ok) throw res.error;
         return res;
     };
+
+
  
     it('posts a reviewer to db', () => {
         return request.post('/reviewers')
-            .send(ebert)
+            .send(travers)
             .then(checkOk)
             .then(({ body }) => {
                 const { _id, __v, name } = body;
@@ -31,10 +35,10 @@ describe('Reviewer API', () => {
                 assert.equal(__v, 0);
                 assert.ok(name);
                 assert.deepEqual(body, {
-                    ...ebert,
+                    ...travers,
                     _id, __v, name
                 });
-                ebert = body;
+                travers = body;
             });
     });
 
@@ -58,7 +62,7 @@ describe('Reviewer API', () => {
         return request.get('/reviewers')
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, [ebert, dana].map(getFields));
+                assert.deepEqual(body, [travers, dana].map(getFields));
             });
 
     });
