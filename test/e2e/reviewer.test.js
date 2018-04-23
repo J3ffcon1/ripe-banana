@@ -50,7 +50,44 @@ describe('Reviewer API', () => {
                 assert.deepEqual(body, dana);
             });
     });
+
+    const getFields = ({ _id, name }) => ({ _id, name });
+
+
+    it('gets all reviewers', () => {
+        return request.get('/reviewers')
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, [ebert, dana].map(getFields));
+            });
+
+    });
     
+    it('update a reviewer', () => {
+        dana.name = 'Dana Shawn Stevens';
+
+        return request.put(`/reviewers/${dana._id}`)
+            .send(dana)
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, dana);
+                return request.get(`/reviewers/${dana._id}`);
+            })
+            .then(({ body }) => {
+                assert.equal(body.name, dana.name);
+            });
+    });
+
+    it('deletes a reviewer', () => {
+        return request.delete(`/reviewers/${dana._id}`)
+            .then(() => {
+                return request.get(`/reviewers/${dana._id}`);
+            })
+            .then(res => {
+                assert.equal(res.status, 404);
+            });
+    });
+  
   
 });
 
