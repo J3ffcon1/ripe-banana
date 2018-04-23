@@ -2,20 +2,36 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 
-describe('Actor E2E Test', () => {
+describe.only('Actor E2E Test', () => {
 
     before(() => dropCollection('actors'));
+    before(() => dropCollection('films'));
+
+    let film1 = {
+        title: 'Scott Pilgrim Vs. the World',
+        released: 2010
+    };
+
+    before(() => {
+        return request.post('/films')
+            .send(film1)
+            .then(({ body }) => {
+                film1 = body;
+            });
+    });
 
     let actor1 = {
         name: 'John Krasinski',
         dob: new Date(1979, 9, 20),
-        pob: 'Newton, MA'
+        pob: 'Newton, MA',
+        films: []
     };
 
     let actor2 = {
         name: 'Aubrey Plaza',
         dob: new Date(1984, 5, 26),
-        pob: 'Wilmington, DE'
+        pob: 'Wilmington, DE',
+        films: []
     };
 
     const checkOk = res => {
@@ -49,7 +65,14 @@ describe('Actor E2E Test', () => {
                 return request.get(`/actors/${actor2._id}`);
             })
             .then(({ body }) => {
-                assert.deepEqual(body, actor2);
+                assert.deepEqual(body, {
+                    ...actor2,
+                    films: [{
+                        _id: film1._id,
+                        title: film1.title,
+                        released: film1.released
+                    }]
+                });
             });
     });
 

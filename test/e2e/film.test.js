@@ -1,7 +1,4 @@
 const { assert } = require('chai');
-// const Film = require('../../lib/models/Film');
-// const Studio = require('../../lib/models/Studio');
-// const Actor = require('../..//lib/models/Actor');
 const request = require('./request');
 const { dropCollection } = require('./db');
 const { Types } = require('mongoose');
@@ -41,15 +38,18 @@ describe('Film E2E Test', () => {
         title: 'A Quiet Place',
         studio: '',
         released: 2018,
-        cast: [{
-            characterPart: 'Lead Role',
-            actor: ''
-        }]
+        cast: []
+    };
+
+    let film2 = {
+        title: 'Scott Pilgrim Vs. the World',
+        studio: '',
+        released: 2010,
+        cast: []
     };
 
     it('saves a film', () => {
         film1.studio = studio1._id;
-        film1.cast.actor = actor1._id;
 
         return request.post('/films')
             .send(film1)
@@ -60,13 +60,30 @@ describe('Film E2E Test', () => {
                 assert.equal(__v, 0);
                 assert.deepEqual(body, {
                     ...film1,
-                    _id, __v
+                    _id, __v,
                 });
                 film1 = body;
+            });       
+    });
+
+    it('gets a film by id', () => {
+        return request.post('/films')
+            .send(film2)
+            .then(checkOk)
+            .then(({ body }) => {
+                film2 = body;
+                return request.get(`/films/${film1._id}`);
+            })
+            .then(({ body }) => {
+                assert.deepEqual(body, film1);
             });
     });
 
+    // const getFields = ({ _id, title, })
 
+    // it('gets all films', () => {
+
+    // })
 
 
 
