@@ -3,26 +3,22 @@ const request = require('./request');
 const { dropCollection } = require('./db');
 const { Types } = require('mongoose');
 
-describe('Studio E2E Test', () => {
+describe.only('Studio E2E Test', () => {
 
     before(() => dropCollection('studios'));
     before(() => dropCollection('films'));
 
-    let film1 = {
-        title: 'E.T. the Extra-Terrestrial',
-        studio: Types.ObjectId,
-        released: 1986,
-        cast: [{ actor: Types.ObjectId }]
-    };
+    let actor1 = { name: 'Drew Berrymore' };
 
+    
     before(() => {
-        return request.post('/films')
-            .send(film1)
+        return request.post('/actors')
+            .send(actor1)
             .then(({ body }) => {
-                film1 = body;
+                actor1 = body;
             });
     });
-
+    
     let studio1 = {
         name: 'Paramount Pictures',
         address: {
@@ -31,57 +27,74 @@ describe('Studio E2E Test', () => {
             country: 'USA'
         }
     };
-
+    
     let studio2 = {
-        name: 'Universal Studios',
+        name: 'Universal Pictures',
         address: {
             city: 'Universal City',
             state: 'CA',
             country: 'USA'
         }
     };
-
+    
     const checkOk = res => {
         if(!res.ok) throw res.error;
         return res;
     };
-
+    
     it('saves a studio', () => {
         return request.post('/studios')
-            .send(studio1)
+            .send(studio2)
             .then(checkOk)
             .then(({ body }) => {
                 const { _id, __v } = body;
                 assert.ok(_id);
                 assert.equal(__v, 0);
                 assert.deepEqual(body, {
-                    ...studio1,
+                    ...studio2,
                     _id, __v
                 });
-                studio1 = body;
-            });
-    });
-
-    it('gets a studio id', () => {
-        return request.post('/studios')
-            .send(studio2)
-            .then(checkOk)
-            .then(({ body }) => {
                 studio2 = body;
-                return request.get(`/studios/${studio2._id}`);
-            })
-            .then(({ body }) => {
-                assert.deepEqual(body, studio2);
             });
     });
-
+        
+    it('gets a studio id', () => {
+        let film1 = {
+            title: 'E.T. the Extra-Terrestrial',
+            studio: studio2._id,
+            released: 1986,
+            cast: [{ actor: actor1._id }]
+        };
+        return request.post('/films')
+            .send(film1)
+            .then(({ body }) => {
+                film1 = body;
+                return request.get(`/studios/${studio2._id}`);
+            })            
+            .then(({ body }) => {
+                assert.deepEqual(body, {
+                    ...studio2,
+                    films: [{
+                        _id: film1._id,
+                        title: film1.title,
+                    }]
+                });
+            });
+    });
+    
     const getFields = ({ _id, name }) => ({ _id, name });
 
     it('gets all studios', () => {
-        return request.get('/studios')
+        return request.post('/studios')
+            .send(studio1)
             .then(checkOk)
             .then(({ body }) => {
-                assert.deepEqual(body, [studio1, studio2].map(getFields));
+                studio1 = body;
+                return request.get('/studios');
+            })
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, [studio2, studio1].map(getFields));
             });
     });
 
@@ -96,7 +109,7 @@ describe('Studio E2E Test', () => {
                 return request.get(`/studios/${studio1._id}`);
             })
             .then(({ body }) => {
-                assert.deepEqual(body, studio1);
+                assert.deepEqual(body.address.city, studio1.address.city);
             });
     });
 
