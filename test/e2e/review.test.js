@@ -4,7 +4,7 @@ const request = require('./request');
 const { dropCollection } = require('./db');
 // const { Types } = require('mongoose');
 
-describe('Review E2E Test', () => {
+describe.only('Review E2E Test', () => {
 
     before(() => dropCollection('reviews'));
     before(() => dropCollection('reviewers'));
@@ -14,17 +14,65 @@ describe('Review E2E Test', () => {
         name: 'Peter Traverse',  //make a mock critic to test
         company: 'Rolling Stones'
     };
+    
+    let studio = {
+        name:'Universal Studios'
+    };
+    
+    let actor =  {
+        name: 'Michael Cera',
+    };
+    let scottpilgrim = {
+        title: 'Scott Pilgrim vs. The World', //make a  mock film to test
+        studio: studio._id,
+        released: 2010,
+        cast: [{
+            role: 'Scott pilgrim',
+            actor: actor._id
+            
+        }]
+    };
+    
+    let review1 = {
+        rating: 3.5,
+        reviewer: traverse._id,
+        review :'Rolling Stone Magazine',
+        film: scottpilgrim._id,
+        createdAt: 2010,
+        updatedAt: 2011
+    };
+    
+    
+    
+ 
+    before(() => {
+        return request.post('/actors')  
+            .send(actor)
+            .then(({ body }) =>{
+                actor = body;
+                assert.ok(body._id);
+            });
+    });
+
 
     before(() => {
         return request.post('/reviewers')
             .send(traverse)
             .then(({ body }) => {
                 traverse = body;
+                assert.ok(body._id);
             });
     });
-    let studio = {
-        name:'Universal Studios'
-    };
+
+    before(() => {
+        return request.post('/films')
+            .send(scottpilgrim)
+            .then(({ body }) => {
+                scottpilgrim = body;
+                assert.ok(body._id);
+            });
+    });
+    
 
     before(() => {
         return request.post('/studios')
@@ -34,25 +82,8 @@ describe('Review E2E Test', () => {
             });
     });
 
-    let scottpilgrim = {
-        title: 'Scott Pilgrim vs. The World', //make a  mock film to test
-        studio: 42,
-        released: 2010,
-        cast: []
-    };
 
-    before(() => {
-        return request.post('/films')  
-            .send(scottpilgrim)
-            .then(({ body }) => {
-                scottpilgrim = body;
-            });
-    });
 
-    let review1 = {
-        rating: 3.5,
-        review :'Rolling Stone Magazine'
-    };
 
     const checkOK = res => {
         if(!res.ok) throw res.error;
@@ -62,6 +93,7 @@ describe('Review E2E Test', () => {
     it('saves a review', () => {
         review1.reviewer = traverse._id;
         review1.film = scottpilgrim._id;
+
         return request.post('/reviews')
             .send(review1)
             .then(checkOK)
@@ -79,5 +111,19 @@ describe('Review E2E Test', () => {
             });
     });
 
+    const getFields = ({ _id, rating, review, film }) => ({ _id, rating, review, film });
+
+    it('get most recent reviews', () => {
+        return request.get('/reviews')
+            .then(checkOK)
+            .then(({ body }) => {
+                assert.deepEqual(body, [{ 
+                    ...review1,
+                    
+                }].map(getFields));     
+            });
+
+
+    });
 
 });
