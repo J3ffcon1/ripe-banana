@@ -1,9 +1,8 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
-const { Types } = require('mongoose');
 
-describe.only('Studio E2E Test', () => {
+describe('Studio E2E Test', () => {
 
     before(() => dropCollection('studios'));
     before(() => dropCollection('films'));
