@@ -1,10 +1,27 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
+const { Types } = require('mongoose');
 
 describe('Studio E2E Test', () => {
 
     before(() => dropCollection('studios'));
+    before(() => dropCollection('films'));
+
+    let film1 = {
+        title: 'E.T. the Extra-Terrestrial',
+        studio: Types.ObjectId,
+        released: 1986,
+        cast: [{ actor: Types.ObjectId }]
+    };
+
+    before(() => {
+        return request.post('/films')
+            .send(film1)
+            .then(({ body }) => {
+                film1 = body;
+            });
+    });
 
     let studio1 = {
         name: 'Paramount Pictures',
