@@ -79,12 +79,6 @@ describe('Film E2E Test', () => {
             });
     });
 
-    // const getFields = ({ _id, title, })
-
-    // it('gets all films', () => {
-
-    // })
-
 
 
 

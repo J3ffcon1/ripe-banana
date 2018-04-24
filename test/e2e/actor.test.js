@@ -1,6 +1,7 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
+const { Types } = require('mongoose');
 
 describe.only('Actor E2E Test', () => {
 
@@ -9,31 +10,31 @@ describe.only('Actor E2E Test', () => {
 
     let film1 = {
         title: 'Scott Pilgrim Vs. the World',
-        released: 2010
+        studio: Types.ObjectId,
+        released: 2010,
+        cast: []
     };
 
-    before(() => {
-        return request.post('/films')
-            .send(film1)
-            .then(({ body }) => {
-                film1 = body;
-            });
-    });
-
+    // before(() => {
+    //     return request.post('/films')
+    //         .send(film1)
+    //         .then(({ body }) => {
+    //             film1 = body;
+    //         });
+    // });
+    
     let actor1 = {
         name: 'John Krasinski',
         dob: new Date(1979, 9, 20),
         pob: 'Newton, MA',
-        films: []
     };
-
+    
     let actor2 = {
         name: 'Aubrey Plaza',
         dob: new Date(1984, 5, 26),
         pob: 'Wilmington, DE',
-        films: []
     };
-
+    
     const checkOk = res => {
         if(!res.ok) throw res.error;
         return res;
@@ -53,11 +54,19 @@ describe.only('Actor E2E Test', () => {
                     _id, __v, dob
                 });
                 actor1 = body;
+                film1.cast[0].actor = actor1._id;
             });
     });
-
+    
+    
+    
     it('gets an actor by id', () => {
-        return request.post('/actors')
+        return request.post('/films')
+            .send(film1)
+            .then(({ body }) => {
+                film1 = body;
+                return request.post('/actors');
+            })
             .send(actor2)
             .then(checkOk)
             .then(({ body }) => {
