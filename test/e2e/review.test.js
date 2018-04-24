@@ -1,6 +1,8 @@
+
 const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
+const { Types } = require('mongoose');
 
 describe('Review E2E Test', () => {
 
@@ -20,10 +22,21 @@ describe('Review E2E Test', () => {
                 traverse = body;
             });
     });
+    let studio = {
+        name:'Universal Studios'
+    };
+
+    before(() => {
+        return request.post('/studios')
+            .send(studio)
+            .then(({ body }) => {
+                studio = body;
+            });
+    });
 
     let scottpilgrim = {
         title: 'Scott Pilgrim vs. The World', //make a  mock film to test
-        studio: 'Universal Studios',
+        studio: 42,
         released: 2010,
         cast: []
     };
@@ -55,6 +68,7 @@ describe('Review E2E Test', () => {
             .then(({ body }) => {
                 const { _id, __v, createdAt, updatedAt } = body;
                 assert.ok(_id);
+                assert.strictEqual(__v, 0);
                 assert.ok(createdAt);
                 assert.ok(updatedAt);
                 assert.deepEqual(body, {
