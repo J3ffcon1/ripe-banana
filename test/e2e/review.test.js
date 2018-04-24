@@ -4,7 +4,7 @@ const request = require('./request');
 const { dropCollection } = require('./db');
 // const { Types } = require('mongoose');
 
-describe.only('Review E2E Test', () => {
+describe('Review E2E Test', () => {
 
     before(() => dropCollection('reviews'));
     before(() => dropCollection('reviewers'));
@@ -111,19 +111,11 @@ describe.only('Review E2E Test', () => {
             });
     });
 
-    const getFields = ({ _id, rating, review, film }) => ({ _id, rating, review, film });
-
-    it('get most recent reviews', () => {
-        return request.get('/reviews')
-            .then(checkOK)
-            .then(({ body }) => {
-                assert.deepEqual(body, [{ 
-                    ...review1,
-                    
-                }].map(getFields));     
-            });
+    // const getFields = ({ _id, rating, review, film }) => ({ _id, rating, review, film });
 
 
-    });
+
+
+
 
 });
