@@ -45,9 +45,7 @@ describe('Reviewer API', () => {
         if(!res.ok) throw res.error;
         return res;
     };
-    
 
-    
     it('posts a reviewer to db', () => {
         return request.post('/reviewers')
             .send(travers)
