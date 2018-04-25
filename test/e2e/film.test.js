@@ -2,11 +2,16 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 
+<<<<<<< HEAD
 describe.only('Film E2E Test', () => {
+=======
+describe('Film E2E Test', () => {
+>>>>>>> 9544ef2ae428aae9b1edf924d8ef62598601894e
 
     before(() => dropCollection('films'));
     before(() => dropCollection('studios'));
     before(() => dropCollection('actors'));
+<<<<<<< HEAD
     before(() => dropCollection('reviewers'));
     before(() => dropCollection('reviews'));
     
@@ -42,6 +47,29 @@ describe.only('Film E2E Test', () => {
             });
     });
 
+=======
+
+    let studio1 = { name: 'Paramount Pictures' };
+
+    before(() => {
+        return request.post('/studios')
+            .send(studio1)
+            .then(({ body }) => {
+                studio1 = body;
+            });
+    });
+
+    let actor1 = { name: 'John Krasinski' };
+
+    before(() => {
+        return request.post('/actors')
+            .send(actor1)
+            .then(({ body }) => {
+                actor1 = body;
+            });
+    });
+    
+>>>>>>> 9544ef2ae428aae9b1edf924d8ef62598601894e
     const checkOk = res => {
         if(!res.ok) throw res.error;
         return res;
@@ -51,6 +79,7 @@ describe.only('Film E2E Test', () => {
         title: 'A Quiet Place',
         studio: '',
         released: 2018,
+<<<<<<< HEAD
         cast: [{
             role: 'grizzled farm dad',
             actor: ''
@@ -80,6 +109,20 @@ describe.only('Film E2E Test', () => {
     it('saves a film', () => {
         film1.studio = studio1._id;
         film1.cast[0].actor = actor1._id;
+=======
+        cast: []
+    };
+
+    let film2 = {
+        title: 'Scott Pilgrim Vs. the World',
+        studio: '',
+        released: 2010,
+        cast: []
+    };
+
+    it('saves a film', () => {
+        film1.studio = studio1._id;
+>>>>>>> 9544ef2ae428aae9b1edf924d8ef62598601894e
 
         return request.post('/films')
             .send(film1)
@@ -88,6 +131,7 @@ describe.only('Film E2E Test', () => {
                 const { _id, __v } = body;
                 assert.ok(_id);
                 assert.equal(__v, 0);
+<<<<<<< HEAD
                 assert.deepEqual(body.cast[0].actor, film1.cast[0].actor);       
             });
     });
@@ -127,4 +171,28 @@ describe.only('Film E2E Test', () => {
             });
     });
 
+=======
+                assert.deepEqual(body, {
+                    ...film1,
+                    _id, __v,
+                });
+                film1 = body;
+            });       
+    });
+
+    it('gets a film by id', () => {
+        return request.post('/films')
+            .send(film2)
+            .then(checkOk)
+            .then(({ body }) => {
+                film2 = body;
+                return request.get(`/films/${film1._id}`);
+            })
+            .then(({ body }) => {
+                assert.deepEqual(body, film1);
+            });
+    });
+
+
+>>>>>>> 9544ef2ae428aae9b1edf924d8ef62598601894e
 });

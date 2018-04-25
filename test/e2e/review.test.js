@@ -4,6 +4,7 @@ const { dropCollection } = require('./db');
 
 describe('Review E2E Test', () => {
 
+
     before(() => dropCollection('reviews'));
     before(() => dropCollection('reviewers'));
     before(() => dropCollection('films'));
@@ -11,7 +12,7 @@ describe('Review E2E Test', () => {
     before(() => dropCollection('studios'));
     
     let actor1 = { name: 'Micheal Cera' };
-    let studio1 = { name : 'Some Studio' };
+    let studio1 = { name: 'Some Studio' };
 
     before(() => {
         return request.post('/actors')
@@ -50,24 +51,23 @@ describe('Review E2E Test', () => {
         return res;
     };
     
+    let film1 = {
+        title: 'Scott Pilgrim vs. The World',
+        released: 2010,
+        cast: []
+    };
+    let review1 = {
+        rating: 3.5,
+        review: 'Rolling Stone Magazine',
+        createdAt: 2010,
+        updatedAt: 2011
+    };
+    
     it('saves a review', () => {
-        let film1 = {
-            title: 'Scott Pilgrim vs. The World',
-            studio: studio1._id,
-            released: 2010,
-            cast: [{
-                role: 'Scott pilgrim',
-                actor: actor1._id
-            }]
-        };
-        let review1 = {
-            rating: 3.5,
-            reviewer: reviewer1._id,
-            review: 'Rolling Stone Magazine',
-            film: '',
-            createdAt: 2010,
-            updatedAt: 2011
-        };
+       
+        film1.studio = studio1._id;
+        review1.reviewer = reviewer1._id;
+
         return request.post('/films')
             .send(film1)
             .then(checkOk)
@@ -92,20 +92,33 @@ describe('Review E2E Test', () => {
             });
     });
 
-//     // const getFields = ({ _id, rating, review, film }) => ({ _id, rating, review, film });
+    // const getFields = ({ _id, rating, review, film }) => ({ _id, rating, review, film });
 
-//     // it('gets a review', () => {
-//     //     return request.post('/reviews')
-//     //         .send(review1)
-//     //         .then(checkOK)
-//     //         .then(({ body }) => {
-//     //             review1 = body;
-//     //             return request.get(`/reviews/${review1._id}`)
-//     //                 .then(({ body }) => {
-//     //                     assert.deepEqual(body, review1);
-//     //                 });
+    it('gets all reviews', () => {
 
-//     //         });
-//     // });
+        review1.reviewer = reviewer1._id;
+        
+        const expectedResponse =    {
+            _id: review1._id,
+            rating: review1.rating,
+            review: review1.review,
+            reviewer: {
+                _id: reviewer1._id,
+                name: reviewer1.name
+            },
+            film: {
+                _id: film1._id,
+                title: film1.title
+            }
+        };
+
+        return request.get('/reviews')
+            .then(checkOk)
+            .then(({ body }) => {
+                assert.deepEqual(body, [expectedResponse]);
+            });
+    });
 
 });
+
+
