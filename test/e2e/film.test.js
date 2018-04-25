@@ -92,8 +92,6 @@ describe.only('Film E2E Test', () => {
             });
     });
 
-    const comeBack = doc => JSON.parse(JSON.stringify(doc.toJSON()));
-
     it('get film by id', () => {  
         
         let review1 = {
@@ -110,7 +108,7 @@ describe.only('Film E2E Test', () => {
             .then(checkOk)
             .then(({ body }) => {
                 review1 = body;
-                return request.get(`/films/${film2._id}`).then(comeBack);
+                return request.get(`/films/${film2._id}`);
             })
             .then(({ body }) => {
                 console.log('error', body);
@@ -121,8 +119,8 @@ describe.only('Film E2E Test', () => {
                         rating: review1._rating,
                         review: review1.review,
                         reviewer: {
-                            _id: reviewer1._id,
-                            name: reviewer1.name
+                            _id: review1.reviewer._id,
+                            name: review1.reviewer.name
                         }
                     }]
                 });
