@@ -3,7 +3,7 @@ const request = require('./request');
 const { dropCollection } = require('./db');
 
 
-describe.only('Review E2E Test', () => {
+describe ('Review E2E Test', () => {
 
 
     before(() => dropCollection('reviews'));
@@ -93,7 +93,6 @@ describe.only('Review E2E Test', () => {
             });
     });
 
-    // const getFields = ({ _id, rating, review, film }) => ({ _id, rating, review, film });
 
     it('gets all reviews', () => {
 
