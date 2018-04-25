@@ -100,14 +100,16 @@ describe.only('Reviewer API', () => {
                 return request.get(`/reviewers/${travers._id}`);
             })
             .then(({ body }) => {
-                console.log('result body', body);
                 assert.deepEqual(body, {
                     ...travers,
                     reviews: [{
                         _id: review1._id,
                         rating: review1.rating,
                         review: review1.review,
-                        film: { _id: film1._id }
+                        film: {
+                            _id: film1._id,
+                            title: film1.title
+                        }
                     }]
                 });
             });
