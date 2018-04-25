@@ -112,7 +112,7 @@ describe('Studio E2E Test', () => {
             });
     });
     
-    it('returns 400 on attempt to delete crew with pirates', () => {
+    it('returns 400 on attempt to delete studio with films', () => {
         return request.delete(`/studios/${studio2._id}`)
             .then(response => {
                 assert.equal(response.status, 400);
