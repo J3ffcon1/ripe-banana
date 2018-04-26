@@ -2,9 +2,9 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 
-describe.skip('Auth API', () => {
+describe('Auth API', () => {
 
-    beforeEach(() => dropCollection('users')); //drop collections and begin with sign-in and sign-up.
+    beforeEach(() => dropCollection('users'));
 
     let token = null;
 
@@ -22,28 +22,63 @@ describe.skip('Auth API', () => {
         assert.ok(token);
     });
 
-    it('signin', () =>{
-        return request  
+    it('verifies', () => {
+        return request
+            .get('/auth/verify')
+            .set('Authorization', token)
+            .then(({ body }) => {
+                assert.isOk(body.verified);
+            });
+    });
+
+    it('signin', () => {
+        return request
             .post('/auth/signin')
             .send({
                 email: 'me@me.com',
                 password: 'abc'
             })
             .then(({ body }) => {
-                assert.ok(body.token, token); //should be able to sign in with our generated token.
+                assert.ok(body.token);
             });
     });
 
-    it('Gives 400 on signup of same email', () =>{ //test to make sure someone who signs up with already in use email returns 400.
+    it('Gives 400 on signup of same email', () => {
         return request
             .post('/auth/signup')
             .send({
-                email: 'me@me.com', //same email we used above.
+                email: 'me@me.com',
                 password: 'abc'
             })
             .then(res => {
                 assert.equal(res.status, 400);
-                assert.equal(res.body.error, 'Email exists'); //you can't use that email you gave because it already exists.
+                assert.equal(res.body.error, 'Email exists');
+            });
+    });
+
+    it('Gives 401 on non-existent email', () => {
+        return request
+            .post('/auth/signin')
+            .send({
+                email: 'bad@me.com',
+                password: 'abc'
+            })
+            .then(res => {
+                assert.equal(res.status, 401);
+                assert.equal(res.body.error, 'Invalid email or password');
+            });
+    });
+
+    it('Gives 401 on bad password', () => {
+        return request
+            .post('/auth/signin')
+            .send({
+                email: 'me@me.com',
+                password: 'bad'
+            })
+            .then(res => {
+                assert.equal(res.status, 401);
+                assert.equal(res.body.error, 'Invalid email or password');
             });
     });
 });
