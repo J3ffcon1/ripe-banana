@@ -92,7 +92,6 @@ describe('Review E2E Test', () => {
             });
     });
 
-    // const getFields = ({ _id, rating, review, film }) => ({ _id, rating, review, film });
 
     it('gets all reviews', () => {
 
