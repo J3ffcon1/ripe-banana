@@ -2,8 +2,7 @@ const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
 
-
-describe ('Review E2E Test', () => {
+describe('Review E2E Test', () => {
 
 
     before(() => dropCollection('reviews'));
