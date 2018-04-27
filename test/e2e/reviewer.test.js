@@ -1,7 +1,7 @@
 const { assert } = require('chai');
 const request = require('./request');
 const { dropCollection } = require('./db');
-
+//create token services do a before all to generate your token
 describe('Reviewer API', () => {
 
     before(() => dropCollection('studios'));
@@ -34,6 +34,7 @@ describe('Reviewer API', () => {
     let travers = {
         name: 'Peter Travers',
         company: 'Rolling Stones'
+
     };
 
     let dana = {
