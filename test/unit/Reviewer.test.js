@@ -7,7 +7,8 @@ describe('Reviewer Unit Test', () => {
     it('this Reviewer model has got it going on', () => {
         const input = {
             name: 'Desson Howe',
-            company: 'Washington Post'
+            company: 'Washington Post',
+            roles:['admin']
         };
 
         const reviewer = new Reviewer(input);
@@ -18,7 +19,7 @@ describe('Reviewer Unit Test', () => {
 
     it('if required field is empty throws error', () => {
         const reviewer = new Reviewer({});
-        const errors = getErrors(reviewer.validateSync(), 2);
+        const errors = getErrors(reviewer.validateSync(), 4);
         assert.equal(errors.name.kind, 'required');
         assert.equal(errors.company.kind, 'required');
     });

@@ -33,13 +33,19 @@ describe('Reviewer API', () => {
     
     let travers = {
         name: 'Peter Travers',
-        company: 'Rolling Stones'
+        company: 'Rolling Stones',
+        hash:'',
+        email:'travers@gmail.com',
+        roles: ['admin']
 
     };
 
     let dana = {
         name: 'Dana Stevens',
-        company: 'Slate'
+        company: 'Slate',
+        hash:'',
+        email:'dana@gmail.com',
+        roles: ['admin']
     };
     
     const checkOk = res => {

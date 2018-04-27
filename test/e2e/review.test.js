@@ -3,7 +3,7 @@ const request = require('./request');
 const { dropCollection } = require('./db');
 
 describe('Review E2E Test', () => {
-
+//tests two different reviewers each with a different specified role. one with the keyname
 
     before(() => dropCollection('reviews'));
     before(() => dropCollection('reviewers'));
